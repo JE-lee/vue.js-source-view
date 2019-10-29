@@ -61,10 +61,11 @@ export function lifecycleMixin (Vue: Class<Component>) {
     const prevEl = vm.$el
     const prevVnode = vm._vnode
     const restoreActiveInstance = setActiveInstance(vm)
-    // _vnode 是当前实例的VNode
+    // _vnode 是当前组件实例的VNode
     vm._vnode = vnode
     // Vue.prototype.__patch__ is injected in entry points
     // based on the rendering backend used.
+    // 首次渲染prevVnode为null
     if (!prevVnode) {
       // initial render
       vm.$el = vm.__patch__(vm.$el, vnode, hydrating, false /* removeOnly */)
@@ -182,7 +183,7 @@ export function mountComponent (
       const vnode = vm._render()
       mark(endTag)
       measure(`vue ${name} render`, startTag, endTag)
-
+      debugger
       mark(startTag)
       vm._update(vnode, hydrating)
       mark(endTag)
@@ -190,6 +191,9 @@ export function mountComponent (
     }
   } else {
     updateComponent = () => {
+      // _render --> 生成VNode
+      // _update ==> VNode --> dom
+      // 客户端渲染的时候hydrating === undefined
       vm._update(vm._render(), hydrating)
     }
   }

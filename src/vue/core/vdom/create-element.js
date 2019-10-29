@@ -52,7 +52,10 @@ export function _createElement (
   children?: any,
   normalizationType?: number
 ): VNode | Array<VNode> {
-  // data是vnode数据
+  // data是VNodeData数据
+  // 是使用渲染函数createElement传入的第二个参数
+
+  // 不可传入响应式对象作为VNode data
   if (isDef(data) && isDef((data: any).__ob__)) {
     process.env.NODE_ENV !== 'production' && warn(
       `Avoid using observed data object as vnode data: ${JSON.stringify(data)}\n` +
@@ -62,6 +65,7 @@ export function _createElement (
     return createEmptyVNode()
   }
   // object syntax in v-bind
+  // 如果有is 属性，那么就替换为对应的Component/HTML tag
   if (isDef(data) && isDef(data.is)) {
     tag = data.is
   }
@@ -82,6 +86,7 @@ export function _createElement (
     }
   }
   // support single function children as default scoped slot
+  // TODO: 暂时跳过default slot
   if (Array.isArray(children) &&
     typeof children[0] === 'function'
   ) {
@@ -89,12 +94,23 @@ export function _createElement (
     data.scopedSlots = { default: children[0] }
     children.length = 0
   }
+  // 规范化children，变为vnode 的一维数组
+  // 如果是primitive值，就变为textNode
+  // 如果是内嵌数组，就打平
+  // 如果是vnode，不变
+  // 思考如下渲染函数的normalizeChildren的过程
+  /*  h('div', [
+    h('span', 'hello'),
+    h('span', 'world')
+  ]) */
   if (normalizationType === ALWAYS_NORMALIZE) {
     children = normalizeChildren(children)
   } else if (normalizationType === SIMPLE_NORMALIZE) {
     children = simpleNormalizeChildren(children)
   }
   let vnode, ns
+  // 当渲染组件的时候，tag是一个component明文对象
+  // 当渲染实际元素的时候，tag是一个字符串
   if (typeof tag === 'string') {
     let Ctor
     ns = (context.$vnode && context.$vnode.ns) || config.getTagNamespace(tag)
@@ -110,7 +126,7 @@ export function _createElement (
         config.parsePlatformTagName(tag), data, children,
         undefined, undefined, context
       )
-    // 判断 vm.$options.componts数组中是否有改tag 名字的已注册组件
+    // 判断 vm.$options.componts数组中是否有该tag 名字的已注册组件
     } else if ((!data || !data.pre) && isDef(Ctor = resolveAsset(context.$options, 'components', tag))) {
       // component
       vnode = createComponent(Ctor, data, context, children, tag)
@@ -125,8 +141,10 @@ export function _createElement (
     }
   } else {
     // direct component options / constructor
+    // 此时的tag是组件plain object
     vnode = createComponent(tag, data, context, children)
   }
+  // TODO: 什么情况下vnode是一个数组
   if (Array.isArray(vnode)) {
     return vnode
   } else if (isDef(vnode)) {

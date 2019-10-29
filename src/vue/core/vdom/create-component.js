@@ -113,8 +113,10 @@ export function createComponent (
   const baseCtor = context.$options._base
 
   // plain options object: turn it into a constructor
+  // 组件的明文对象，就是一个普通的Object
   // 有可能是null
   if (isObject(Ctor)) {
+    // 转换成真正的Vue组件，是个Function
     Ctor = baseCtor.extend(Ctor)
   }
 
@@ -150,9 +152,11 @@ export function createComponent (
 
   // resolve constructor options in case global mixins are applied after
   // component constructor creation
+  // 注入全局的mixins
   resolveConstructorOptions(Ctor)
 
   // transform component v-model data into props & events
+  // 如果指定了model 指令
   if (isDef(data.model)) {
     transformModel(Ctor.options, data)
   }
@@ -161,6 +165,7 @@ export function createComponent (
   const propsData = extractPropsFromVNodeData(data, Ctor, tag)
 
   // functional component
+  // 如果是一个functional 组件
   if (isTrue(Ctor.options.functional)) {
     return createFunctionalComponent(Ctor, propsData, data, context, children)
   }
@@ -172,6 +177,7 @@ export function createComponent (
   // so it gets processed during parent component patch.
   data.on = data.nativeOn
 
+  // 如果是抽象组件
   if (isTrue(Ctor.options.abstract)) {
     // abstract components do not keep anything
     // other than props & listeners & slot
@@ -186,9 +192,9 @@ export function createComponent (
 
   // install component management hooks onto the placeholder node
   installComponentHooks(data)
-
   // return a placeholder vnode
   const name = Ctor.options.name || tag
+  // 组件的VNode是没有children的
   const vnode = new VNode(
     `vue-component-${Ctor.cid}${name ? `-${name}` : ''}`,
     data, undefined, undefined, undefined, context,

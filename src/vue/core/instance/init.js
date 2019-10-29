@@ -18,7 +18,6 @@ export function initMixin (Vue: Class<Component>) {
     // a uid
     // vue组件实例id
     vm._uid = uid++
-
     let startTag, endTag
     /* istanbul ignore if */
     if (process.env.NODE_ENV !== 'production' && config.performance && mark) {
@@ -34,6 +33,7 @@ export function initMixin (Vue: Class<Component>) {
       // optimize internal component instantiation
       // since dynamic options merging is pretty slow, and none of the
       // internal component options needs special treatment.
+      // 实例子组件
       initInternalComponent(vm, options)
     } else {
       vm.$options = mergeOptions(
@@ -55,6 +55,7 @@ export function initMixin (Vue: Class<Component>) {
     initRender(vm)
     callHook(vm, 'beforeCreate')
     initInjections(vm) // resolve injections before data/props
+    // 可以在data函数中使用injection
     initState(vm)
     initProvide(vm) // resolve provide after data/props
     callHook(vm, 'created')
@@ -66,7 +67,7 @@ export function initMixin (Vue: Class<Component>) {
       measure(`vue ${vm._name} init`, startTag, endTag)
     }
 
-    // 没有el，不挂载现
+    // 如果是子组件init, 没有el，不挂载
     if (vm.$options.el) {
       vm.$mount(vm.$options.el)
     }

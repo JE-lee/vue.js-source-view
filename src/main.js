@@ -2,12 +2,16 @@
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
 import Vue from './vue/platforms/web/entry-runtime-with-compiler'
 import App from './App'
+import Hello from './Hello'
 
 Vue.config.productionTip = false
 
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
-  components: { App },
-  render: h => h(App)
+  components: { Hello },
+  render: h => h('div', [
+    h('span', 'hello'),
+    h('span', 'world')
+  ])
 })

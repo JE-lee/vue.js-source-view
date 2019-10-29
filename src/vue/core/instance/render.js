@@ -72,6 +72,7 @@ export function renderMixin (Vue: Class<Component>) {
     const vm: Component = this
     const { render, _parentVnode } = vm.$options
 
+    // TODO: slot
     if (_parentVnode) {
       vm.$scopedSlots = normalizeScopedSlots(
         _parentVnode.data.scopedSlots,
@@ -125,6 +126,7 @@ export function renderMixin (Vue: Class<Component>) {
       vnode = createEmptyVNode()
     }
     // set parent
+    // TODO: 是否是渲染子组件的时候_parentVnode才有值
     vnode.parent = _parentVnode
     return vnode
   }
