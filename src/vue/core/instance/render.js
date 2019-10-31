@@ -127,6 +127,7 @@ export function renderMixin (Vue: Class<Component>) {
     }
     // set parent
     // TODO: 是否是渲染子组件的时候_parentVnode才有值
+    debugger
     vnode.parent = _parentVnode
     return vnode
   }
