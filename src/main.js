@@ -10,8 +10,6 @@ Vue.config.productionTip = false
 new Vue({
   el: '#app',
   components: { Hello },
-  render: h => h('div', [
-    h('span', 'hello'),
-    h('span', 'world')
-  ])
+  // render: h => h('div', 'message')
+  render: h => h(Hello)
 })

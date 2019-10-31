@@ -44,6 +44,7 @@ const componentVNodeHooks = {
       const mountedNode: any = vnode // work around flow
       componentVNodeHooks.prepatch(mountedNode, mountedNode)
     } else {
+      debugger
       const child = vnode.componentInstance = createComponentInstanceForVnode(
         vnode,
         activeInstance

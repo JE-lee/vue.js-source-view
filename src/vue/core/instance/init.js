@@ -68,6 +68,7 @@ export function initMixin (Vue: Class<Component>) {
     }
 
     // 如果是子组件init, 没有el，不挂载
+    debugger
     if (vm.$options.el) {
       vm.$mount(vm.$options.el)
     }

@@ -54,8 +54,9 @@ export function _createElement (
 ): VNode | Array<VNode> {
   // data是VNodeData数据
   // 是使用渲染函数createElement传入的第二个参数
-
+  // context是当前的组件实例，这个非常重要
   // 不可传入响应式对象作为VNode data
+  debugger
   if (isDef(data) && isDef((data: any).__ob__)) {
     process.env.NODE_ENV !== 'production' && warn(
       `Avoid using observed data object as vnode data: ${JSON.stringify(data)}\n` +
@@ -142,6 +143,7 @@ export function _createElement (
   } else {
     // direct component options / constructor
     // 此时的tag是组件plain object
+    debugger
     vnode = createComponent(tag, data, context, children)
   }
   // TODO: 什么情况下vnode是一个数组

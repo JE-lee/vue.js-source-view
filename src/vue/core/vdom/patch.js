@@ -144,6 +144,7 @@ export function createPatchFunction (backend) {
     vnode.isRootInsert = !nested // for transition enter check
     // 尝试渲染子组件成功
     // TODO: 这里需要看一下组件vnode和html的vnode的区别
+    debugger
     if (createComponent(vnode, insertedVnodeQueue, parentElm, refElm)) {
       return
     }
@@ -227,7 +228,11 @@ export function createPatchFunction (backend) {
       // it should've created a child instance and mounted it. the child
       // component also has set the placeholder vnode's elm.
       // in that case we can just return the element and be done.
+      // 调用完init之后，此时的子组件的vnode 已经有了elm,作为子组件的dom树已经构建完成
+      debugger
       if (isDef(vnode.componentInstance)) {
+        // 将组件vnode 的elm 置为 组件实例的$el
+        // TODO: 组件实例的$el是什么时候赋值的
         initComponent(vnode, insertedVnodeQueue)
         insert(parentElm, vnode.elm, refElm)
         // keep-alive 组件
@@ -297,6 +302,7 @@ export function createPatchFunction (backend) {
         checkDuplicateKeys(children)
       }
       for (let i = 0; i < children.length; ++i) {
+        debugger
         createElm(children[i], insertedVnodeQueue, vnode.elm, null, true, children, i)
       }
     } else if (isPrimitive(vnode.text)) {
@@ -709,6 +715,7 @@ export function createPatchFunction (backend) {
 
   return function patch (oldVnode, vnode, hydrating, removeOnly) {
     // 根组件首次挂载传入的oldVnode是根DOM元素
+    // vm.__path__(vm.$el)
     if (isUndef(vnode)) {
       if (isDef(oldVnode)) invokeDestroyHook(oldVnode)
       return
@@ -716,7 +723,7 @@ export function createPatchFunction (backend) {
 
     let isInitialPatch = false
     const insertedVnodeQueue = []
-
+    debugger
     if (isUndef(oldVnode)) {
       // empty mount (likely as component), create new root element
       isInitialPatch = true
@@ -758,7 +765,8 @@ export function createPatchFunction (backend) {
 
         // replacing existing element
         const oldElm = oldVnode.elm
-        const parentElm = nodeOps.parentNode(oldElm)
+        // 当渲染子组件的时候，由于还未挂到dom树上，所以，此时的parentElm为undefined
+        const parentElm = nodeOps.parentNode(oldElm) // return oldElm.parentNode
         // create new node
         createElm(
           vnode,
@@ -803,7 +811,7 @@ export function createPatchFunction (backend) {
 
         // destroy old node
         // 相当于移除div#app这个HTML元素
-        debugger
+        // patch 子组件的时候，还没有指定parentElm
         if (isDef(parentElm)) {
           removeVnodes([oldVnode], 0, 0)
         } else if (isDef(oldVnode.tag)) {
