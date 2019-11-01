@@ -11,5 +11,8 @@ new Vue({
   el: '#app',
   components: { Hello },
   // render: h => h('div', 'message')
-  render: h => h(Hello)
+  render: h => h(Hello, [
+    'message',
+    h('div', 'div-message')
+  ])
 })

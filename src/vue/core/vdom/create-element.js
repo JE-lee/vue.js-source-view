@@ -145,7 +145,13 @@ export function _createElement (
     // 此时的tag是组件plain object
     debugger
     vnode = createComponent(tag, data, context, children)
-  }
+    // 类似于
+    // render: h => h(Hello, [
+    //  'message',
+    //  h('div', 'div-message')
+    //])
+    }
+    // 这样的渲染函数，只会渲染Hello组件，后面的children会被忽略掉
   // TODO: 什么情况下vnode是一个数组
   if (Array.isArray(vnode)) {
     return vnode

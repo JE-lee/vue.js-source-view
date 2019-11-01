@@ -192,6 +192,7 @@ export function createComponent (
   }
 
   // install component management hooks onto the placeholder node
+  debugger
   installComponentHooks(data)
   // return a placeholder vnode
   const name = Ctor.options.name || tag
