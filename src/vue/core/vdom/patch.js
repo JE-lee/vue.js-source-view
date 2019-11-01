@@ -232,7 +232,7 @@ export function createPatchFunction (backend) {
       debugger
       if (isDef(vnode.componentInstance)) {
         // 将组件vnode 的elm 置为 组件实例的$el
-        // TODO: 组件实例的$el是什么时候赋值的
+        // 组件实例的$el是在__patch__完之后赋值的
         initComponent(vnode, insertedVnodeQueue)
         insert(parentElm, vnode.elm, refElm)
         // keep-alive 组件
@@ -821,6 +821,7 @@ export function createPatchFunction (backend) {
     }
 
     invokeInsertHook(vnode, insertedVnodeQueue, isInitialPatch)
+    // 如果vnode是一个组件vnode，那么vnode.elm就是vm.$el
     return vnode.elm
   }
 }
