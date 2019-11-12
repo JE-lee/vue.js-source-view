@@ -34,6 +34,8 @@ export function toggleObserving (value: boolean) {
  * object's property keys into getter/setters that
  * collect dependencies and dispatch updates.
  */
+
+
 export class Observer {
   value: any;
   dep: Dep;
@@ -41,6 +43,9 @@ export class Observer {
 
   constructor (value: any) {
     this.value = value
+    // 这里的dep是保持对对象/数组本身的watcher集合
+    // 当调用this.$set, this.$del, 数组的一些编译方法的时候，就会触发this.dep.notify()
+    // 相应的watcher里面的回调函数就会被调用
     this.dep = new Dep()
     this.vmCount = 0
     def(value, '__ob__', this)
@@ -152,7 +157,7 @@ export function defineReactive (
   if ((!getter || setter) && arguments.length === 2) {
     val = obj[key]
   }
-
+  // 如果值是对象，那么对val进行递归，设置属性的getter和setter
   let childOb = !shallow && observe(val)
   Object.defineProperty(obj, key, {
     enumerable: true,
@@ -162,6 +167,14 @@ export function defineReactive (
       if (Dep.target) {
         dep.depend()
         if (childOb) {
+          // childOb是一个Observer,
+          // 当值是一个对象的时候，将会在该对象上的__ob__.dep 注入watcher
+          // 这句话其实很难理解
+          // watcher的种类有很多种，computed watcher, render watcher, user watcher
+          // 这里讨论的是render watcher
+          // 一个render watcher 对应于一个组件
+          // new Watcher(vm._update(vm._render()))
+          // dep.depend() 相当于将当前render watcher 放入了属性中的dep,也就是defineReactive函数中dep
           childOb.dep.depend()
           if (Array.isArray(value)) {
             dependArray(value)
