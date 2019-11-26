@@ -128,6 +128,7 @@ export function _createElement (
         undefined, undefined, context
       )
     // 判断 vm.$options.componts数组中是否有该tag 名字的已注册组件
+    // 包括全局注册的组件
     } else if ((!data || !data.pre) && isDef(Ctor = resolveAsset(context.$options, 'components', tag))) {
       // component
       vnode = createComponent(Ctor, data, context, children, tag)

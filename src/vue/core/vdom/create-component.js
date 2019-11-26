@@ -197,6 +197,7 @@ export function createComponent (
   // return a placeholder vnode
   const name = Ctor.options.name || tag
   // 组件的VNode是没有children的
+  // 第三个参数代表的是children，这里传的是undefined
   const vnode = new VNode(
     `vue-component-${Ctor.cid}${name ? `-${name}` : ''}`,
     data, undefined, undefined, undefined, context,

@@ -714,7 +714,7 @@ export function createPatchFunction (backend) {
   }
 
   return function patch (oldVnode, vnode, hydrating, removeOnly) {
-    // 根组件首次挂载传入的oldVnode是根DOM元素
+    // 根组件首次挂载传入的oldVnode是根DOM元素,也就是$option.$el
     // vm.__path__(vm.$el)
     if (isUndef(vnode)) {
       if (isDef(oldVnode)) invokeDestroyHook(oldVnode)
