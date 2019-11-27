@@ -142,8 +142,9 @@ export function createPatchFunction (backend) {
     }
 
     vnode.isRootInsert = !nested // for transition enter check
-    // 尝试渲染子组件成功
-    // TODO: 这里需要看一下组件vnode和html的vnode的区别
+    // 尝试将vnode 作为组件vnode渲染
+    // 组件vnode 有data，没有children
+    // 而普通的vnode数据没有data，有children
     debugger
     if (createComponent(vnode, insertedVnodeQueue, parentElm, refElm)) {
       return
@@ -167,6 +168,7 @@ export function createPatchFunction (backend) {
         }
       }
       // 在这里创建真实的HTML元素
+      // 也就是组件的根元素
       vnode.elm = vnode.ns
         ? nodeOps.createElementNS(vnode.ns, tag)
         : nodeOps.createElement(tag, vnode)
@@ -191,7 +193,7 @@ export function createPatchFunction (backend) {
           insert(parentElm, vnode.elm, refElm)
         }
       } else {
-        // 遍历children
+        // 遍历children创建DOM元素
         createChildren(vnode, children, insertedVnodeQueue)
         if (isDef(data)) {
           invokeCreateHooks(vnode, insertedVnodeQueue)
@@ -218,10 +220,11 @@ export function createPatchFunction (backend) {
 
   function createComponent (vnode, insertedVnodeQueue, parentElm, refElm) {
     let i = vnode.data
+    // 如果有vnode.data
     if (isDef(i)) {
       const isReactivated = isDef(vnode.componentInstance) && i.keepAlive
       if (isDef(i = i.hook) && isDef(i = i.init)) {
-        // 实例化子组件
+        // 在init 钩子函数中实例化子组件并且执行$mount
         i(vnode, false /* hydrating */)
       }
       // after calling the init hook, if the vnode is a child component
@@ -714,9 +717,11 @@ export function createPatchFunction (backend) {
   }
 
   return function patch (oldVnode, vnode, hydrating, removeOnly) {
-    // 根组件首次挂载传入的oldVnode是根DOM元素,也就是$option.$el
-    // vm.__path__(vm.$el)
+    // 组件首次挂载传入的oldVnode是vm.$el,对于根组件来说就是传入的el。
+
+    // 组件卸载的情况
     if (isUndef(vnode)) {
+      // 触发componentVNodeHooks中的destroy钩子
       if (isDef(oldVnode)) invokeDestroyHook(oldVnode)
       return
     }
@@ -724,25 +729,30 @@ export function createPatchFunction (backend) {
     let isInitialPatch = false
     const insertedVnodeQueue = []
     debugger
+    
     if (isUndef(oldVnode)) {
+      // 子组件初次渲染的时候进入这里
+      // 子组件初次渲染的时候oldVnode为undefined
       // empty mount (likely as component), create new root element
       isInitialPatch = true
       createElm(vnode, insertedVnodeQueue)
     } else {
-      // 是真实的元素
       const isRealElement = isDef(oldVnode.nodeType)
       if (!isRealElement && sameVnode(oldVnode, vnode)) {
         // patch existing root node
         patchVnode(oldVnode, vnode, insertedVnodeQueue, null, null, removeOnly)
       } else {
+        // 组件初次渲染
         if (isRealElement) {
           // mounting to a real element
           // check if this is server-rendered content and if we can perform
           // a successful hydration.
+          // 根组件初次渲染的时候进入这里
           if (oldVnode.nodeType === 1 && oldVnode.hasAttribute(SSR_ATTR)) {
             oldVnode.removeAttribute(SSR_ATTR)
             hydrating = true
           }
+          // 服务端渲染情况下的客户端根组件挂载 暂时不考虑
           if (isTrue(hydrating)) {
             if (hydrate(oldVnode, vnode, insertedVnodeQueue)) {
               invokeInsertHook(vnode, insertedVnodeQueue, true)
@@ -765,7 +775,7 @@ export function createPatchFunction (backend) {
 
         // replacing existing element
         const oldElm = oldVnode.elm
-        // 当渲染子组件的时候，由于还未挂到dom树上，所以，此时的parentElm为undefined
+        // 当子组件初次渲染的时候，由于还未挂到dom树上，所以，此时的parentElm为undefined
         const parentElm = nodeOps.parentNode(oldElm) // return oldElm.parentNode
         // create new node
         createElm(

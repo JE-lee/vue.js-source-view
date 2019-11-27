@@ -89,6 +89,7 @@ Vue.prototype.$mount = function (
     }
   }
   // mount 的时候有可能template 为undefined, render 为null
+  // 子组件mount的时候el为undefined
   return mount.call(this, el, hydrating)
 }
 
