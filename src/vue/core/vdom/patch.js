@@ -195,6 +195,8 @@ export function createPatchFunction (backend) {
       } else {
         // 遍历children创建DOM元素
         createChildren(vnode, children, insertedVnodeQueue)
+        // 如果上面createComponent无法成功实例化，则会执行到这一步
+        // 这种边界情况属于组件VNode无法成功实例化
         if (isDef(data)) {
           invokeCreateHooks(vnode, insertedVnodeQueue)
         }
