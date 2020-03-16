@@ -25,7 +25,7 @@
     "@babel/register": "^7.0.0",
     "@types/node": "^10.12.18",
     "@types/webpack": "^4.4.22",
-    "acorn": "^5.2.1",
+    "acorn": "^5.7.4",
     "autoprefixer": "^7.1.2",
     "babel-eslint": "^10.0.1",
     "babel-helper-vue-jsx-merge-props": "^2.0.3",
